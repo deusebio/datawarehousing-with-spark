@@ -16,14 +16,9 @@ resource "juju_application" "kafka" {
     kafka-image = 46
   }
 
-  storage     = [
-    {
-      count = 1
-      label = "data"
-      pool  = "kubernetes"
-      size  = "10240M"
-    },
-  ]
+  storage_directives = {
+    data = "kubernetes,1,10240M"
+  }
 
   units = 1
 
@@ -47,14 +42,9 @@ resource "juju_application" "zookeeper" {
     zookeeper-image = 31
   }
 
-  storage     = [
-    {
-      count = 1
-      label = "zookeeper"
-      pool  = "kubernetes"
-      size  = "1024M"
-    },
-  ]
+  storage_directives = {
+    zookeeper = "kubernetes,1,1024M"
+  }
 
   units = 1
 
