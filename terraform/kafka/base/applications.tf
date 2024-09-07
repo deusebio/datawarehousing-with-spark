@@ -43,7 +43,7 @@ resource "juju_application" "zookeeper" {
   }
 
   storage_directives = {
-    zookeeper = "kubernetes,1,1024M"
+    zookeeper = "kubernetes,1,10240M"
   }
 
   units = 1
