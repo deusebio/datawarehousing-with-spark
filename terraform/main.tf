@@ -38,7 +38,7 @@ resource "juju_model" "kafka" {
 module "spark" {
   source = "./spark"
 
-  spark_depends_on = [juju_model.spark]
+  depends_on = [juju_model.spark]
 
   model = juju_model.spark.name
   s3 = var.s3
@@ -47,7 +47,7 @@ module "spark" {
 module "kafka" {
   source = "./kafka"
 
-  kafka_depends_on = [juju_model.kafka]
+  depends_on = [juju_model.kafka]
 
   model = juju_model.kafka.name
 }
