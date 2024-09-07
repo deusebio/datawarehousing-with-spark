@@ -88,6 +88,11 @@ resource "juju_application" "metastore" {
       postgresql-image = 159
   }
 
+  storage_directives = {
+    pgdata = "kubernetes,1,1024M"
+  }
+
+
   units = 1
   trust = true
 
