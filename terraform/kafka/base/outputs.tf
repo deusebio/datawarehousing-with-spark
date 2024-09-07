@@ -9,17 +9,3 @@ output "charms" {
     producer = juju_application.producer.name
   }
 }
-
-output "cos_endpoint" {
-  value = {
-    charm = juju_application.hub.name
-    endpoint = "cos"
-  }
-}
-
-output "history_server_ingress" {
-  value = {
-    charm = juju_application.history_server.name
-    endpoint = "ingress"
-  }
-}
