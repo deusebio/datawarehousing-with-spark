@@ -42,6 +42,7 @@ module "spark" {
 
   model = juju_model.spark.name
   s3 = var.s3
+  cos_model = var.cos_model
 }
 
 module "kafka" {
@@ -50,4 +51,5 @@ module "kafka" {
   depends_on = [juju_model.kafka]
 
   model = juju_model.kafka.name
+  cos_model = var.cos_model
 }
