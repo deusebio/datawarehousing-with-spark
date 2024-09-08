@@ -13,7 +13,7 @@ resource "juju_model" "spark" {
   }
 
   config = {
-    logging-config              = "<root>=DEBUG"
+    logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
   }
 }
@@ -30,7 +30,7 @@ resource "juju_model" "kafka" {
   }
 
   config = {
-    logging-config              = "<root>=DEBUG"
+    logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
   }
 }
