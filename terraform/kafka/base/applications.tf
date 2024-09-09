@@ -103,7 +103,7 @@ resource "juju_application" "spark_streaming" {
   model      = var.model
 
   charm {
-    name    = "kafka-test-app"
+    name    = "spark-test-app"
     channel = "latest/edge"
     revision = 1
   }
