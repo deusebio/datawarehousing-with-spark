@@ -53,3 +53,37 @@ module "kafka" {
   model = juju_model.kafka.name
   cos_model = var.cos_model
 }
+
+resource "juju_integration" "spark_streaming_hub" {
+
+  depends_on = [module.spark.module.base.juju_offer.hub]
+
+  model      = "kafka"
+
+  application {
+    name = module.kafka.charms.spark_streaming
+    endpoint = "spark-service-account"
+  }
+
+  application {
+    offer_url = module.spark.offers.hub_service_account
+  }
+
+}
+
+resource "juju_integration" "spark_streaming_metastore" {
+
+  depends_on = [module.spark.module.base.juju_offer.metastore]
+
+  model      = "kafka"
+
+  application {
+    name = module.kafka.charms.spark_streaming
+    endpoint = "metastore"
+  }
+
+  application {
+    offer_url = module.spark.offers.metastore_database
+  }
+
+}

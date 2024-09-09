@@ -7,3 +7,7 @@ output "charms" {
   )
 }
 
+output "offers" {
+  value = module.base.offers
+}
+

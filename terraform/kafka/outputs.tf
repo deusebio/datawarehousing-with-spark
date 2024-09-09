@@ -6,4 +6,3 @@ output "charms" {
       module.base.charms, module.cos[*].charms...
   )
 }
-

@@ -11,16 +11,9 @@ output "charms" {
   }
 }
 
-output "cos_endpoint" {
+output "offers" {
   value = {
-    charm = juju_application.hub.name
-    endpoint = "cos"
-  }
-}
-
-output "history_server_ingress" {
-  value = {
-    charm = juju_application.history_server.name
-    endpoint = "ingress"
+    hub_service_account = juju_offer.hub.url
+    metastore_database = juju_offer.hub.url
   }
 }
