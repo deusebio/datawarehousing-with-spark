@@ -96,3 +96,30 @@ resource "juju_application" "producer" {
 
   constraints = "arch=amd64"
 }
+
+resource "juju_application" "spark_streaming" {
+  name = "spark-streaming"
+
+  model      = var.model
+
+  charm {
+    name    = "kafka-test-app"
+    channel = "latest/edge"
+    revision = 1
+  }
+
+  resources = {
+    spark-image = 1
+  }
+
+  units = 1
+
+  config = {
+    namespace = var.model
+    flavour = "kafka"
+    partitions = 10
+    spark-image = "ghcr.io/canonical/charmed-spark@sha256:4c4e6f9d394348a26ec66969898434f007467b2caee03b2d393ddffd14dc2ecf"
+  }
+
+  constraints = "arch=amd64"
+}
