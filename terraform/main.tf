@@ -56,7 +56,7 @@ module "kafka" {
 
 resource "juju_integration" "spark_streaming_hub" {
 
-  depends_on = [module.spark]
+  depends_on = [module.spark,module.kafka]
 
   model      = "kafka"
 
@@ -73,7 +73,7 @@ resource "juju_integration" "spark_streaming_hub" {
 
 resource "juju_integration" "spark_streaming_metastore" {
 
-  depends_on = [module.spark]
+  depends_on = [module.spark,module.kafka]
 
   model      = "kafka"
 

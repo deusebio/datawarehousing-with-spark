@@ -14,6 +14,6 @@ output "charms" {
 output "offers" {
   value = {
     hub_service_account = juju_offer.hub.url
-    metastore_database = juju_offer.hub.url
+    metastore_database = juju_offer.metastore.url
   }
 }

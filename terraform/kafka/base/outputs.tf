@@ -7,5 +7,6 @@ output "charms" {
     zookeeper = juju_application.zookeeper.name
     admin = juju_application.admin.name
     producer = juju_application.producer.name
+    spark_streaming = juju_application.spark_streaming.name
   }
 }
