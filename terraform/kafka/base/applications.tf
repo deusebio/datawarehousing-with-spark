@@ -105,7 +105,7 @@ resource "juju_application" "spark_streaming" {
   charm {
     name    = "spark-test-app"
     channel = "latest/edge"
-    revision = 1
+    revision = 2
   }
 
   resources = {
