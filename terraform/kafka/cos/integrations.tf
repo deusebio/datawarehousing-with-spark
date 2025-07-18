@@ -2,15 +2,15 @@
 # See LICENSE file for licensing details.
 
 data "juju_offer" "grafana_dashboards" {
-  url = local.endpoints.dashboards
+  url = var.dashboards_offer
 }
 
 data "juju_offer" "prometheus" {
-  url = local.endpoints.prometheus
+  url = var.metrics_offer
 }
 
 data "juju_offer" "loki" {
-  url = local.endpoints.loki
+  url = var.logging_offer
 }
 
 # Relations between Apps <> Grafana Agent

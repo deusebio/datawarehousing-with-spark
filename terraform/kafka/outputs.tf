@@ -3,6 +3,6 @@
 
 output "charms" {
   value = merge(
-      module.base.charms, module.cos[*].charms...
+      module.base.charms, module.observability[*].charms...
   )
 }

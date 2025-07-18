@@ -25,7 +25,7 @@ module "cos" {
   source     = "git::https://github.com/canonical/observability-stack//terraform/cos-lite"
   model = juju_model.cos.name
   channel = "1/stable"
-  use_tls = false
+  internal_tls = false
 }
 
 resource "juju_model" "spark" {
@@ -50,8 +50,8 @@ resource "juju_model" "spark" {
 
 module "spark" {
   source                	= "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform?ref=dpe-7677-demo-updates"
-  model                 	= "spark"
-  create_model              = true
+  model                 	= juju_model.spark.name
+  create_model              = false
   K8S_CLOUD                 = var.K8S_CLOUD
   K8S_CREDENTIAL            = var.K8S_CREDENTIAL
   storage_backend           = "s3"
@@ -93,7 +93,14 @@ module "kafka" {
   depends_on = [juju_model.kafka]
 
   model = juju_model.kafka.name
-  cos_model = var.cos_model
+  cos = {
+    deployed = "external"
+    offers={
+      dashboard=module.cos.offers.grafana_dashboards.url
+      metrics=module.cos.offers.prometheus_receive_remote_write.url,
+      logging=module.cos.offers.loki_logging.url
+    }
+  }
 }
 
 resource "juju_integration" "spark_streaming_hub" {
@@ -108,7 +115,7 @@ resource "juju_integration" "spark_streaming_hub" {
   }
 
   application {
-    offer_url = module.spark.offers.hub_service_account
+    offer_url = module.spark.offers.hub_service_account.url
   }
 
 }
@@ -125,7 +132,7 @@ resource "juju_integration" "spark_streaming_metastore" {
   }
 
   application {
-    offer_url = module.spark.offers.metastore_database
+    offer_url = module.spark.offers.metastore_database.url
   }
 
 }
