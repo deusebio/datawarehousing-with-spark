@@ -6,10 +6,15 @@ terraform {
 
   required_providers {
     juju = {
-      version = "~> 0.13.0"
+      version = ">= 0.20.0"
       source  = "juju/juju"
     }
   }
 }
 
-provider "juju" {}
+provider "juju" {
+  controller_addresses = var.JUJU_CONTROLLER_IPS
+  username         	= var.JUJU_USERNAME
+  password         	= var.JUJU_PASSWORD
+  ca_certificate   	= base64decode(var.JUJU_CA_CERTIFICATE)
+}
