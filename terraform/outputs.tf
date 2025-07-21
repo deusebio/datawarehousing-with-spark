@@ -3,7 +3,8 @@
 
 output "charms" {
   value = merge(
-      module.kafka.charms, module.spark.charms
+      # module.kafka.charms,
+    module.spark.charms
   )
 }
 

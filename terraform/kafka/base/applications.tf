@@ -104,12 +104,12 @@ resource "juju_application" "spark_streaming" {
 
   charm {
     name    = "spark-test-app"
-    channel = "latest/edge"
-    revision = 2
+    channel = "latest/edge/dpe7677-demo"
+    revision = 4
   }
 
   resources = {
-    spark-image = 1
+    spark-image = 2
   }
 
   config = {

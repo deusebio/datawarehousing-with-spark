@@ -55,9 +55,12 @@ module "spark" {
   K8S_CLOUD                 = var.K8S_CLOUD
   K8S_CREDENTIAL            = var.K8S_CREDENTIAL
   storage_backend           = "s3"
-  s3             = var.s3
-  cos = {
-    deployed = "external"
+  s3                        = var.s3
+  zookeeper_units           = 1
+  kyuubi_units              = 1
+  integration_hub_revision  = 64
+  cos                       = {
+    deployed = "no"
     offers={
       dashboard=module.cos.offers.grafana_dashboards.url
       metrics=module.cos.offers.prometheus_receive_remote_write.url,
