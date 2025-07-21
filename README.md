@@ -201,18 +201,110 @@ juju run --model spark s3/0 \
 
 Wait for everything to go into `active/idle` state.
 
+### Inspecting the deployment
+
+We just provide the output of the juju status for reference:
+
+```shell
+Model  Controller  Cloud/Region        Version  SLA          Timestamp
+kafka  micro       microk8s/localhost  3.6.8    unsupported  18:47:08+02:00
+
+SAAS                             Status  Store  URL
+grafana-dashboards               active  local  admin/cos.grafana-dashboards
+integration-hub                  active  local  admin/spark.integration-hub
+loki-logging                     active  local  admin/cos.loki-logging
+metastore                        active  local  admin/spark.metastore
+prometheus-receive-remote-write  active  local  admin/cos.prometheus-receive-remote-write
+
+App              Version  Status  Scale  Charm              Channel                   Rev  Address         Exposed  Message
+admin                     active      1  data-integrator    latest/stable             181  10.152.183.157  no       
+agent            0.40.4   active      1  grafana-agent-k8s  1/stable                  121  10.152.183.240  no       tracing: off
+kafka            3.9.0    active      1  kafka-k8s          3/stable                   82  10.152.183.148  no       
+producer                  active      1  kafka-test-app     latest/stable              11  10.152.183.99   no       Topic test-topic enabled with process producer
+spark-streaming           active      1  spark-test-app     latest/edge/dpe7677-demo    4  10.152.183.254  no       
+zookeeper        3.9.2    active      1  zookeeper-k8s      3/stable                   78  10.152.183.24   no       
+
+Unit                Workload  Agent  Address      Ports  Message
+admin/0*            active    idle   10.1.99.143         
+agent/0*            active    idle   10.1.99.176         tracing: off
+kafka/0*            active    idle   10.1.99.151         
+producer/0*         active    idle   10.1.99.156         Topic test-topic enabled with process producer
+spark-streaming/0*  active    idle   10.1.99.154         
+zookeeper/0*        active    idle   10.1.99.150     
+```
+
+```shell
+❯ juju status --model spark
+Model  Controller  Cloud/Region        Version  SLA          Timestamp
+spark  micro       microk8s/localhost  3.6.8    unsupported  18:47:29+02:00
+
+App              Version  Status  Scale  Charm                      Channel        Rev  Address         Exposed  Message
+certificates              active      1  self-signed-certificates   latest/stable  163  10.152.183.68   no       
+data-integrator           active      1  data-integrator            latest/stable  161  10.152.183.88   no       
+history-server            active      1  spark-history-server-k8s   3.4/edge        40  10.152.183.142  no       
+integration-hub           active      1  spark-integration-hub-k8s  latest/edge     64  10.152.183.71   no       
+kyuubi                    active      1  kyuubi-k8s                 latest/edge    100  10.152.183.30   no       
+kyuubi-users     14.11    active      1  postgresql-k8s             14/stable      281  10.152.183.167  no       
+metastore        14.11    active      1  postgresql-k8s             14/stable      281  10.152.183.109  no       
+s3                        active      1  s3-integrator              1/stable       145  10.152.183.234  no       
+zookeeper        3.9.2    active      1  zookeeper-k8s              3/stable        78  10.152.183.112  no       
+
+Unit                Workload  Agent  Address      Ports  Message
+certificates/0*     active    idle   10.1.99.145         
+data-integrator/0*  active    idle   10.1.99.172         
+history-server/0*   active    idle   10.1.99.173         
+integration-hub/0*  active    idle   10.1.99.158         
+kyuubi-users/0*     active    idle   10.1.99.171         Primary
+kyuubi/0*           active    idle   10.1.99.155         
+metastore/0*        active    idle   10.1.99.165         Primary
+s3/0*               active    idle   10.1.99.174         
+zookeeper/0*        active    idle   10.1.99.170         
+
+Offer            Application      Charm                      Rev  Connected  Endpoint               Interface              Role
+certificates     certificates     self-signed-certificates   163  0/0        certificates           tls-certificates       provider
+integration-hub  integration-hub  spark-integration-hub-k8s  64   1/1        spark-service-account  spark_service_account  provider
+metastore        metastore        postgresql-k8s             281  1/1        database               postgresql_client      provider
+send-ca-cert     certificates     self-signed-certificates   163  0/0        send-ca-cert           certificate_transfer   provider
+```
+
+```shell
+❯ juju status --model cos  
+Model  Controller  Cloud/Region        Version  SLA          Timestamp
+cos    micro       microk8s/localhost  3.6.8    unsupported  18:47:53+02:00
+
+App           Version  Status  Scale  Charm             Channel        Rev  Address         Exposed  Message
+alertmanager  0.27.0   active      1  alertmanager-k8s  1/stable       162  10.152.183.223  no       
+catalogue              active      1  catalogue-k8s     1/stable        87  10.152.183.48   no       
+grafana       9.5.3    active      1  grafana-k8s       1/stable       151  10.152.183.84   no       
+loki          2.9.6    active      1  loki-k8s          1/stable       199  10.152.183.93   no       
+prometheus    2.52.0   active      1  prometheus-k8s    1/stable       247  10.152.183.163  no       
+traefik       2.11.0   active      1  traefik-k8s       latest/stable  236  10.152.183.62   no       Serving at 172.21.0.247
+
+Unit             Workload  Agent  Address      Ports  Message
+alertmanager/0*  active    idle   10.1.99.163         
+catalogue/0*     active    idle   10.1.99.144         
+grafana/0*       active    idle   10.1.99.179         
+loki/0*          active    idle   10.1.99.178         
+prometheus/0*    active    idle   10.1.99.177         
+traefik/0*       active    idle   10.1.99.159         Serving at 172.21.0.247
+
+Offer                            Application   Charm             Rev  Connected  Endpoint              Interface                Role
+alertmanager-karma-dashboard     alertmanager  alertmanager-k8s  162  0/0        karma-dashboard       karma_dashboard          provider
+grafana-dashboards               grafana       grafana-k8s       151  1/1        grafana-dashboard     grafana_dashboard        requirer
+loki-logging                     loki          loki-k8s          199  1/1        logging               loki_push_api            provider
+prometheus-receive-remote-write  prometheus    prometheus-k8s    247  1/1        receive-remote-write  prometheus_remote_write  provider
+```
+
 ## Verify the deployment
 
 The deployment comes with three Juju models: `kafka`, `spark`, and `cos`. In the `kafka` model there are the ingestion and processing charms, `producer` and `spark-streaming` respectively.
 While the deployment will already start the producer to ingest data into Kafka, the aggregation job needs to be started manually to prevent racing condition to fail the job.
 
-So after everything is in `active/idle` state, checks that the Kafka producer process is correctly working by ssh-ing into the unit:
+So after everything is in `active/idle` state, checks that the Kafka producer process is correctly working by ssh-ing into the unit, and tailing the output files that can be found under the `/tmp` folder (look for the two files containing the std out and std err).
 
 ```shell
-juju ssh --model kafka producer/0 /bin/bash
+juju ssh --model kafka producer/0 "tail -f /tmp/*_producer.log"
 ```
-
-and tailing the output files that can be found under the `/tmp` folder (look for the two files containing the std out and std err).
 
 Once that you have verified that the Kafka process is correctly pushing data, you can then start the `spark-streaming` process to produce aggregation that are consolidated into a HiveTable stored on MinIO backend:
 
@@ -223,7 +315,7 @@ juju run --model kafka spark-streaming/0 start-process
 You can verify that the process has started by both checking the logs in the charm:
 
 ```shell
-juju ssh --model kafka --container spark  spark-streaming/0 /bin/bash pebble logs -f
+juju ssh --model kafka --container spark  spark-streaming/0 "pebble logs -f"
 ```
 
 After a few minutes, you can also check that data is written into the object storage by inspecting the bucket:
@@ -232,7 +324,7 @@ After a few minutes, you can also check that data is written into the object sto
 aws s3 ls spark-test/warehouse/<table_name>/
 ```
 
-where the table name is the id of the `kafka` <> `spark-streaming` relation.
+where the table name is the id of the `metastore` <> `spark-streaming` relation.
 
 ## Explore the data using DBBeaver
 
