@@ -58,7 +58,9 @@ module "spark" {
   s3                        = var.s3
   zookeeper_units           = 1
   kyuubi_units              = 1
-  integration_hub_revision  = 64
+  integration_hub_revision  = 65
+  history_server_revision   = 45
+
   cos                       = {
     deployed = "no"
     offers={
