@@ -62,7 +62,7 @@ module "spark" {
   history_server_revision   = 45
 
   cos                       = {
-    deployed = "no"
+    deployed = "external"
     offers={
       dashboard=module.cos.offers.grafana_dashboards.url
       metrics=module.cos.offers.prometheus_receive_remote_write.url,
