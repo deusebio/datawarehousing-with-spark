@@ -47,6 +47,18 @@ resource "juju_model" "spark" {
   }
 }
 
+module azure_storage {
+  count = var.storage_backend == "azure_storage" ? 1 : 0
+  source = "./azure"
+  AZURE_REGION = var.azure_storage.region
+  AZURE_RESOURCE_GROUP = var.azure_storage.resource_group
+  AZURE_STORAGE_ACCOUNT = var.azure_storage.storage_account
+
+  providers = {
+    azurerm = azurerm
+  }
+}
+
 
 module "spark" {
   source                	= "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform?ref=dpe-7677-demo-updates"
@@ -54,8 +66,14 @@ module "spark" {
   create_model              = false
   K8S_CLOUD                 = var.K8S_CLOUD
   K8S_CREDENTIAL            = var.K8S_CREDENTIAL
-  storage_backend           = "s3"
-  s3                        = var.s3
+  storage_backend           = var.storage_backend
+  s3                        = var.storage_backend == "s3" ? var.s3 : {}
+  azure_storage             = var.storage_backend == "azure_storage" ? {
+    container       = module.azure_storage[0].container_name
+    storage_account = module.azure_storage[0].storage_account
+    secret_key      = module.azure_storage[0].secret_key
+    protocol        = "abfss"
+  } : {}
   zookeeper_units           = 1
   kyuubi_units              = 1
   integration_hub_revision  = 65

@@ -31,7 +31,17 @@ variable "K8S_CREDENTIAL" {
   description = "The name of the kubernetes juju credential."
 }
 
+variable "storage_backend" {
+  type        = string
+  description = "Storage backend to be used"
 
+  validation {
+    condition     = contains(["azure_storage", "s3"], var.storage_backend)
+    error_message = "Valid values for var: test_variable are (s3, azure_storage)."
+  }
+
+  default = "s3"
+}
 
 variable "s3" {
   description = "S3 Bucket information"
@@ -39,6 +49,16 @@ variable "s3" {
     bucket               = optional(string, "spark-test")
     endpoint             = optional(string, "https://s3.amazonaws.com")
     region               = optional(string, "us-east-1")
+  })
+  default = {}
+}
+
+variable "azure_storage" {
+  description = "Azure Container information"
+  type = object({
+    region               = optional(string, "westeurope")
+    resource_group       = optional(string, "myresourcegroup")
+    storage_account      = optional(string, "sparktestaks")
   })
   default = {}
 }
