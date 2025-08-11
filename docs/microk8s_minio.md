@@ -13,8 +13,8 @@ sudo snap install microk8s --channel 1.32-strict/stable
 Configure the deployment
 
 ```shell
-sudo microk8s enable hostpath-storage dns rbac storage                                                    
-sudo snap alias microk8s.kubectl kubectl              
+sudo microk8s enable hostpath-storage dns rbac
+sudo snap alias microk8s.kubectl kubectl
 microk8s config > ~/.kube/config
 ```
 

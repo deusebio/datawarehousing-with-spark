@@ -38,7 +38,7 @@ module "base" {
 
 module "bundled_cos" {
   count        = var.cos.deployed == "bundled" ? 1 : 0
-  source       = "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform/external/cos?ref=dpe-7677-demo-updates"
+  source       = "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform/external/cos?ref=rev2"
   model        = data.juju_model.cos.name
   cos_tls_ca   = var.cos.tls.ca
   cos_tls_cert = var.cos.tls.cert

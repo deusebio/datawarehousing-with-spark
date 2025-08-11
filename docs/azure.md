@@ -7,7 +7,7 @@ The current demo is done on MicroK8s, but this can also be done on other substra
 Install the `azure-cli` tool
 
 ```shell
-sudo snap install azure-cli --channel latest/stable
+sudo snap install azcli --channel latest/stable
 ```
 
 which installs version 2.67.0+v10.

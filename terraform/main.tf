@@ -61,7 +61,7 @@ module azure_storage {
 
 
 module "spark" {
-  source                	= "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform?ref=dpe-7677-demo-updates"
+  source                	= "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform?ref=rev2"
   model                 	= juju_model.spark.name
   create_model              = false
   K8S_CLOUD                 = var.K8S_CLOUD
