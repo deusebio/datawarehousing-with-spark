@@ -1,6 +1,6 @@
 ## Explore the data using DBBeaver
 
-DBeaver is an free to use DB manager client, able to connect to several type of database.
+DBeaver is a free to use DB manager client, able to connect to several type of database.
 
 ### Retrieve credentials
 
