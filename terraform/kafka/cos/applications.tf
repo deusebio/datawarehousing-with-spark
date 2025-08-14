@@ -8,12 +8,12 @@ resource "juju_application" "agent" {
 
   charm {
     name    = "grafana-agent-k8s"
-    channel = "latest/stable"
-    revision = 64
+    channel = "1/stable"
+    revision = 121
   }
 
   resources = {
-      agent-image = 38
+      agent-image = 46
   }
 
   units = 1

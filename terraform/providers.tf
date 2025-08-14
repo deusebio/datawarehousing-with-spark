@@ -6,10 +6,27 @@ terraform {
 
   required_providers {
     juju = {
-      version = "~> 0.13.0"
+      version = ">= 0.20.0"
       source  = "juju/juju"
+    }
+    azapi = {
+      source  = "azure/azapi"
+      version = "~>1.5"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~>3.0"
     }
   }
 }
 
-provider "juju" {}
+provider "juju" {
+  controller_addresses = var.JUJU_CONTROLLER_IPS
+  username         	= var.JUJU_USERNAME
+  password         	= var.JUJU_PASSWORD
+  ca_certificate   	= base64decode(var.JUJU_CA_CERTIFICATE)
+}
+
+provider "azurerm" {
+  features {}
+}

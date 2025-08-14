@@ -8,12 +8,12 @@ resource "juju_application" "kafka" {
 
   charm {
     name    = "kafka-k8s"
-    channel = "3/edge"
-    revision = 69
+    channel = "3/stable"
+    revision = 82
   }
 
   resources = {
-    kafka-image = 46
+    kafka-image = 49
   }
 
   storage_directives = {
@@ -34,12 +34,12 @@ resource "juju_application" "zookeeper" {
 
   charm {
     name    = "zookeeper-k8s"
-    channel = "3/edge"
-    revision = 59
+    channel = "3/stable"
+    revision = 78
   }
 
   resources = {
-    zookeeper-image = 31
+    zookeeper-image = 34
   }
 
   storage_directives = {
@@ -61,7 +61,7 @@ resource "juju_application" "admin" {
   charm {
     name    = "data-integrator"
     channel = "latest/stable"
-    revision = 41
+    revision = 181
   }
 
   units = 1
@@ -82,7 +82,7 @@ resource "juju_application" "producer" {
 
   charm {
     name    = "kafka-test-app"
-    channel = "latest/edge"
+    channel = "latest/stable"
     revision = 11
   }
 
@@ -105,18 +105,18 @@ resource "juju_application" "spark_streaming" {
   charm {
     name    = "spark-test-app"
     channel = "latest/edge"
-    revision = 2
+    revision = 4
   }
 
   resources = {
-    spark-image = 1
+    spark-image = 2
   }
 
   config = {
     namespace = var.model
     flavour = "kafka"
     partitions = 10
-    spark-image = "ghcr.io/canonical/charmed-spark@sha256:4c4e6f9d394348a26ec66969898434f007467b2caee03b2d393ddffd14dc2ecf"
+    spark-image = "ghcr.io/canonical/charmed-spark@sha256:243525f4fcc8c63635196a6904bdd457632a12a3ab14bf47a4f860db436b9591"
   }
 
   units = 1
