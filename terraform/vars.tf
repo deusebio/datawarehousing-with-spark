@@ -62,3 +62,9 @@ variable "azure_storage" {
   })
   default = {}
 }
+
+variable "enable_kubeflow" {
+  description = "Whether to deploy Kubeflow for Analytics"
+  type = bool
+  default = false
+}

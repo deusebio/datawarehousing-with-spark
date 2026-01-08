@@ -10,3 +10,9 @@ output "charms" {
     spark_streaming = juju_application.spark_streaming.name
   }
 }
+
+output "offers" {
+  value = {
+    kafka_client = juju_offer.kafka_client
+  }
+}
