@@ -211,8 +211,8 @@ resource "juju_integration" "kubeflow_integrator_kafka_client" {
   model = juju_model.kubeflow[0].name
 
   application {
-    name     = module.kubeflow.endpoints.spark_client.app
-    endpoint = module.kubeflow.endpoints.spark_client.endpoint
+    name     = module.kubeflow[0].endpoints.spark_client.app
+    endpoint = module.kubeflow[0].endpoints.spark_client.endpoint
   }
 
   application {
@@ -225,8 +225,8 @@ resource "juju_integration" "kubeflow_integrator_integration_hub" {
   model = juju_model.kubeflow[0].name
 
   application {
-    name     = module.kubeflow.endpoints.kafka_client.app
-    endpoint = module.kubeflow.endpoints.kafka_client.endpoint
+    name     = module.kubeflow[0].endpoints.kafka_client.app
+    endpoint = module.kubeflow[0].endpoints.kafka_client.endpoint
   }
 
   application {
