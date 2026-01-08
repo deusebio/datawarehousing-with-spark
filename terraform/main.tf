@@ -208,7 +208,7 @@ module "kubeflow" {
 
 resource "juju_integration" "kubeflow_integrator_kafka_client" {
   count = var.enable_kubeflow ? 1 : 0
-  model = juju_model.kubeflow.name
+  model = juju_model.kubeflow[0].name
 
   application {
     name     = module.kubeflow.endpoints.spark_client.app
@@ -222,7 +222,7 @@ resource "juju_integration" "kubeflow_integrator_kafka_client" {
 
 resource "juju_integration" "kubeflow_integrator_integration_hub" {
   count = var.enable_kubeflow ? 1 : 0
-  model = juju_model.kubeflow.name
+  model = juju_model.kubeflow[0].name
 
   application {
     name     = module.kubeflow.endpoints.kafka_client.app
