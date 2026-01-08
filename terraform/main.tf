@@ -37,6 +37,9 @@ resource "juju_model" "cos" {
   config = {
     logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
+    juju-http-proxy = var.http_proxy
+    juju-https-proxy = var.https_proxy
+    juju-no-proxy = var.no_proxy
   }
 }
 
@@ -68,6 +71,10 @@ resource "juju_model" "spark" {
   config = {
     logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
+    juju-http-proxy = var.http_proxy
+    juju-https-proxy = var.https_proxy
+    juju-no-proxy = var.no_proxy
+
   }
 }
 
@@ -120,6 +127,9 @@ resource "juju_model" "kafka" {
   config = {
     logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
+    juju-http-proxy = var.http_proxy
+    juju-https-proxy = var.https_proxy
+    juju-no-proxy = var.no_proxy
   }
 }
 
@@ -195,6 +205,9 @@ resource "juju_model" "kubeflow" {
   config = {
     logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
+    juju-http-proxy = var.http_proxy
+    juju-https-proxy = var.https_proxy
+    juju-no-proxy = var.no_proxy
   }
 }
 
