@@ -13,3 +13,15 @@ variable "spark_user" {
   default     = "spark-user"
 }
 
+variable "topic_name" {
+  description = "The name of the Juju Model where spark is deployed"
+  type        = string
+  default     = "test-topic"
+}
+
+variable "consumer_group" {
+  description = "The name of the Juju Model where spark is deployed"
+  type        = string
+  default     = "kfgc"
+}
+

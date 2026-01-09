@@ -29,6 +29,9 @@ resource "juju_application" "kubeflow_integrator" {
   config = {
     spark-service-account = var.spark_user
     profile = var.profile
+    kafka-topic-name = var.topic_name
+    kafka-consumer-group-prefix = var.consumer_group
+    kafka-extra-user-roles = "admin"
   }
 }
 

@@ -127,9 +127,9 @@ resource "juju_model" "kafka" {
   config = {
     logging-config              = "<root>=INFO"
     update-status-hook-interval = "5m"
-    juju-http-proxy = var.http_proxy
-    juju-https-proxy = var.https_proxy
-    juju-no-proxy = var.no_proxy
+    # juju-http-proxy = var.http_proxy
+    # juju-https-proxy = var.https_proxy
+    # juju-no-proxy = var.no_proxy
   }
 }
 
@@ -216,11 +216,12 @@ module "kubeflow" {
   count = var.enable_kubeflow ? 1 : 0
 
   source = "./kubeflow"
-  profile = "admin"
+  profile = "*"
+  topic_name = ""
 }
 
 resource "juju_integration" "kubeflow_integrator_kafka_client" {
-  count = var.enable_kubeflow ? 1 : 0
+  count = var.enable_kubeflow ? 0 : 0
   model = juju_model.kubeflow[0].name
 
   application {
@@ -234,7 +235,7 @@ resource "juju_integration" "kubeflow_integrator_kafka_client" {
 }
 
 resource "juju_integration" "kubeflow_integrator_integration_hub" {
-  count = var.enable_kubeflow ? 1 : 0
+  count = var.enable_kubeflow ? 0 : 0
   model = juju_model.kubeflow[0].name
 
   application {
