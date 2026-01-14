@@ -79,6 +79,8 @@ resource "juju_model" "spark" {
 }
 
 module "spark" {
+  depends_on = [module.cos, juju_model.spark]
+
   source                	= "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform?ref=0f35e48125b680ae827e6efa2a1a481513d01243"
   model                 	= juju_model.spark.name
   create_model              = false
@@ -94,9 +96,12 @@ module "spark" {
   } : {}
   zookeeper_units           = 1
   kyuubi_units              = 1
-  integration_hub_revision  = 65
-  history_server_revision   = 45
 
+  integration_hub_revision  = 90
+  integration_hub_image     = {
+    integration-hub-image = "ghcr.io/canonical/spark-integration-hub@sha256:dbcd4bce247df35483bb94606fa11d3316d9d529e1476efa95ef333b78c9f414"
+  }
+  
   cos                       = {
     deployed = "external"
     offers={
@@ -134,9 +139,9 @@ resource "juju_model" "kafka" {
 }
 
 module "kafka" {
-  source = "./kafka"
+  depends_on = [module.cos, juju_model.kafka]
 
-  depends_on = [juju_model.kafka]
+  source = "./kafka"
 
   model = juju_model.kafka.name
   cos = {
@@ -212,16 +217,27 @@ resource "juju_model" "kubeflow" {
 }
 
 module "kubeflow" {
-  depends_on = [juju_model.kubeflow]
+  depends_on = [module.cos, juju_model.kubeflow]
+
   count = var.enable_kubeflow ? 1 : 0
 
   source = "./kubeflow"
   profile = "*"
-  topic_name = ""
+  topic_name = "test-topic"
+
+  cos                       = {
+    deployed = "external"
+    offers={
+      dashboard=module.cos.offers.grafana_dashboards.url
+      metrics=module.cos.offers.prometheus_receive_remote_write.url,
+      logging=module.cos.offers.loki_logging.url
+    }
+  }
+
 }
 
 resource "juju_integration" "kubeflow_integrator_kafka_client" {
-  count = var.enable_kubeflow ? 0 : 0
+  count = var.enable_kubeflow ? 1 : 0
   model = juju_model.kubeflow[0].name
 
   application {
@@ -235,7 +251,7 @@ resource "juju_integration" "kubeflow_integrator_kafka_client" {
 }
 
 resource "juju_integration" "kubeflow_integrator_integration_hub" {
-  count = var.enable_kubeflow ? 0 : 0
+  count = var.enable_kubeflow ? 1 : 0
   model = juju_model.kubeflow[0].name
 
   application {

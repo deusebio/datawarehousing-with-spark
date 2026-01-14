@@ -2,11 +2,13 @@
 # See LICENSE file for licensing details.
 
 module "kubeflow" {
-  source = "git::https://github.com/canonical/charmed-kubeflow-solutions//modules/kubeflow?ref=wip-adding-proxy"
+  # source = "git::https://github.com/canonical/charmed-kubeflow-solutions//modules/kubeflow?ref=wip-adding-proxy"
+  source = "git::https://github.com/canonical/charmed-kubeflow-solutions//modules/kubeflow?ref=kf-8292-replace-grafana-agent-k8s"
   create_model = false
   dex_static_username = "admin"
   dex_static_password = "admin"
   metacontroller_operator_revision = 551
+  cos_configuration = var.cos.deployed == "no" ? false : true
 }
 
 module "resource_dispatcher" {
@@ -105,4 +107,27 @@ resource "juju_integration" "kubeflow_integrator_resource_dispatcher_rolebinding
   }
 }
 
+data "juju_model" "cos" {
+  name = var.cos.model
+}
 
+module "bundled_cos" {
+  count        = var.cos.deployed == "bundled" ? 1 : 0
+  source       = "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform/external/cos?ref=rev2"
+  model        = data.juju_model.cos.name
+  cos_tls_ca   = var.cos.tls.ca
+  cos_tls_cert = var.cos.tls.cert
+  cos_tls_key  = var.cos.tls.key
+}
+
+module "observability" {
+  depends_on       = [module.kubeflow, module.bundled_cos]
+  count            = var.cos.deployed == "no" ? 0 : 1
+  source           = "./cos"
+  dashboards_offer = var.cos.deployed == "external" ? var.cos.offers.dashboard : one(module.bundled_cos[*].dashboards_offer)
+  logging_offer    = var.cos.deployed == "external" ? var.cos.offers.logging : one(module.bundled_cos[*].logging_offer)
+  metrics_offer    = var.cos.deployed == "external" ? var.cos.offers.metrics : one(module.bundled_cos[*].metrics_offer)
+
+  model = module.kubeflow.model
+  opentelemetry_collector_name = module.kubeflow.opentelemetry_collector_k8s.app_name
+}
