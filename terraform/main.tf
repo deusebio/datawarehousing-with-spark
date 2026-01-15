@@ -101,7 +101,10 @@ module "spark" {
   integration_hub_image     = {
     integration-hub-image = "ghcr.io/canonical/spark-integration-hub@sha256:dbcd4bce247df35483bb94606fa11d3316d9d529e1476efa95ef333b78c9f414"
   }
-  
+
+  kyuubi_users_revision = 717
+  metastore_revision = 717
+
   cos                       = {
     deployed = "external"
     offers={
