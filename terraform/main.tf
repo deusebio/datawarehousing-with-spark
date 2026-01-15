@@ -60,6 +60,8 @@ resource "juju_model" "spark" {
     replace_triggered_by = []
   }
 
+  depends_on=[juju_model.kafka]
+
   name = "spark"
 
   credential = var.K8S_CREDENTIAL
@@ -123,6 +125,8 @@ resource "juju_model" "kafka" {
   lifecycle {
     replace_triggered_by = []
   }
+
+  depends_on=[juju_model.cos]
 
   name = "kafka"
 
@@ -201,6 +205,8 @@ resource "juju_model" "kubeflow" {
   lifecycle {
     replace_triggered_by = []
   }
+
+  depends_on=[juju_model.spark]
 
   name = "kubeflow"
 
