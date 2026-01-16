@@ -60,7 +60,7 @@ spark-client.service-account-registry get-config --username spark-user --namespa
 
 1. In the Kubeflow UI, click "Notebooks" and "+ New notebook".
 
-2. In the setup, click "Custom Notebook" and choose custom image for notebook (under Advanced Options), and speficy the charmed-spark-jupyterlab image `ghcr.io/canonical/charmed-spark-jupyterlab:3.4-22.04_edge`. 
+2. In the setup, click "Custom Notebook" and choose custom image for notebook (under Advanced Options), and specify the charmed-spark-jupyterlab image `ghcr.io/canonical/charmed-spark-jupyterlab:3.4-22.04_edge`. 
 
 3. Scroll down to the bottom. In the "Advanced Options", choose the configuration "Configure PySpark for Kubeflow notebooks", and finally click on "Create". This will apply the poddefault that configures this notebook to access Spark.
 
