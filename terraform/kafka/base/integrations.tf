@@ -56,3 +56,9 @@ resource "juju_integration" "kafka_consumer" {
     endpoint = "kafka-client"
   }
 }
+
+resource "juju_offer" "kafka_client" {
+  model            = var.model
+  application_name = juju_application.kafka.name
+  endpoints        = ["kafka-client"]
+}

@@ -6,3 +6,10 @@ output "charms" {
       module.base.charms, module.observability[*].charms...
   )
 }
+
+output "offers" {
+  description = "The name and url of the various offers being exposed"
+  value = merge(
+    module.base.offers
+  )
+}
