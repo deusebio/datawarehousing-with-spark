@@ -106,7 +106,7 @@ module "spark" {
     protocol        = "abfss"
   } : {}
 
-  service_mesh_type = "ambient"
+  service_mesh_mode = "managed"
 
   cos_offers = {
     dashboard=module.cos.offers.grafana_dashboards.url
