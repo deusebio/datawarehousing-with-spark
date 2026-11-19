@@ -45,11 +45,11 @@ resource "juju_model" "cos" {
 
 module "cos" {
   depends_on = [juju_model.cos]
-  source     = "git::https://github.com/canonical/observability-stack//terraform/cos-lite?ref=tf-provider-v0"
-  model = juju_model.cos.name
-  channel = "1/stable"
+  source       = "git::https://github.com/canonical/observability-stack//terraform/cos-lite?ref=7448dadb996835c1c0ae1d79d2f435992652d410"
+  model_uuid   = juju_model.cos.uuid
   internal_tls = false
 }
+
 
 #############################
 # Spark
@@ -83,37 +83,35 @@ resource "juju_model" "spark" {
 module "spark" {
   depends_on = [module.cos, juju_model.spark]
 
-  source                	= "git::https://github.com/canonical/spark-k8s-bundle//releases/3.4/terraform?ref=0f35e48125b680ae827e6efa2a1a481513d01243"
-  model                 	= juju_model.spark.name
+  source                	  = "https://github.com/canonical/spark-k8s-bundle//terraform/products/charmed-spark?ref=336fad433d9bb2f1cae9c6cb0024c64ef19d911d"
+  model_uuid                = juju_model.spark.uuid
   create_model              = false
-  K8S_CLOUD                 = var.K8S_CLOUD
-  K8S_CREDENTIAL            = var.K8S_CREDENTIAL
+
   storage_backend           = var.storage_backend
-  s3                        = var.storage_backend == "s3" ? var.s3 : {}
-  azure_storage             = var.storage_backend == "azure_storage" ? {
+  
+  s3_access_key             = var.storage_backend == "s3" ? var.s3.access_key : null
+  s3_secret_key             = var.storage_backend == "s3" ? var.s3.secret_key : null
+  s3_config                 = var.storage_backend == "s3" ? {
+    bucket               = var.s3.bucket
+    endpoint             = var.s3.endpoint
+    region               = var.s3.region
+  } : {}
+  
+  
+  azure_storage_secret_key      = var.storage_backend == "azure_storage" ? module.azure_storage[0].secret_key : null
+
+  azure_storage_config          = var.storage_backend == "azure_storage" ? {
     container       = module.azure_storage[0].container_name
     storage_account = module.azure_storage[0].storage_account
-    secret_key      = module.azure_storage[0].secret_key
     protocol        = "abfss"
   } : {}
-  zookeeper_units           = 1
-  kyuubi_units              = 1
 
-  integration_hub_revision  = 90
-  integration_hub_image     = {
-    integration-hub-image = "ghcr.io/canonical/spark-integration-hub@sha256:dbcd4bce247df35483bb94606fa11d3316d9d529e1476efa95ef333b78c9f414"
-  }
+  service_mesh_mode = "ambient"
 
-  kyuubi_users_revision = 717
-  metastore_revision = 717
-
-  cos                       = {
-    deployed = "external"
-    offers={
-      dashboard=module.cos.offers.grafana_dashboards.url
-      metrics=module.cos.offers.prometheus_receive_remote_write.url,
-      logging=module.cos.offers.loki_logging.url
-    }
+  cos_offers = {
+    dashboard=module.cos.offers.grafana_dashboards.url
+    metrics=module.cos.offers.prometheus_receive_remote_write.url,
+    logging=module.cos.offers.loki_logging.url
   }
 }
 
@@ -225,50 +223,59 @@ resource "juju_model" "kubeflow" {
   }
 }
 
+
 module "kubeflow" {
-  depends_on = [module.cos, juju_model.kubeflow]
+  source                	  = "https://github.com/canonical/charmed-kubeflow-solutions//terraform/products/kubeflow?ref=1.11-ubuntu2"
 
-  count = var.enable_kubeflow ? 1 : 0
+  release            = 1.11
+  risk               = stable
+  create_model       = false
+  model_uuid         = juju_model.kubeflow.uuid
+  service_mesh_type  = ambient
+  auth_type          = dex"
 
-  source = "./kubeflow"
-  profile = "*"
-  topic_name = "test-topic"
+  enable_kfp         = true
+  enable_katib       = false
+  enable_notebooks   = true
+  enable_tensorboard = false
+  enable_training_v1 = false
+  enable_training_v2 = false
+  enable_mlflow      = false
+  enable_kserve      = false
+  enable_feast       = false
+  enable_spark       = false
 
-  cos                       = {
-    deployed = "external"
-    offers={
-      dashboard=module.cos.offers.grafana_dashboards.url
-      metrics=module.cos.offers.prometheus_receive_remote_write.url,
-      logging=module.cos.offers.loki_logging.url
+  # Observability is always enabled in kubeflow-cos and automatically wired to COS
+  enable_observability = true
+  dashboards_offer     = module.cos.offers.grafana_dashboards.url
+  logging_offer        = module.cos.offers.loki_logging.url
+  metrics_offer        = module.cos.offers.prometheus_receive_remote_write.url
+
+  external_integrations = {
+    default = {
+      profile = "*"
+      mysql = null
+      postgresql = null
+      spark = {
+        kind = "offer"
+        url = module.spark.offers.integration_hub_service_account.url
+        service_account = "spark-user"
+      }
     }
   }
-
 }
 
-resource "juju_integration" "kubeflow_integrator_kafka_client" {
-  count = var.enable_kubeflow ? 1 : 0
-  model = juju_model.kubeflow[0].name
-
-  application {
-    name     = module.kubeflow[0].endpoints.spark_client.app
-    endpoint = module.kubeflow[0].endpoints.spark_client.endpoint
-  }
-
-  application {
-    offer_url = module.spark.offers.hub_service_account.url
-  }
-}
-
-resource "juju_integration" "kubeflow_integrator_integration_hub" {
-  count = var.enable_kubeflow ? 1 : 0
-  model = juju_model.kubeflow[0].name
-
-  application {
-    name     = module.kubeflow[0].endpoints.kafka_client.app
-    endpoint = module.kubeflow[0].endpoints.kafka_client.endpoint
-  }
-
-  application {
-    offer_url = module.kafka.offers.kafka_client.url
-  }
-}
+# resource "juju_integration" "kubeflow_integrator_integration_hub" {
+#   count = var.enable_kubeflow ? 1 : 0
+#   model = juju_model.kubeflow[0].name
+# 
+#   application {
+#     name     = module.kubeflow[0].endpoints.kafka_client.app
+#     endpoint = module.kubeflow[0].endpoints.kafka_client.endpoint
+#   }
+# 
+#   application {
+#     offer_url = module.kafka.offers.kafka_client.url
+#   }
+# }
+# 
