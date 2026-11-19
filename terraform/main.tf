@@ -119,80 +119,80 @@ module "spark" {
 # Kafka
 #############################
 
-resource "juju_model" "kafka" {
-  lifecycle {
-    replace_triggered_by = []
-  }
-
-  depends_on=[juju_model.cos]
-
-  name = "kafka"
-
-  credential = var.K8S_CREDENTIAL
-
-  cloud {
-    name = var.K8S_CLOUD
-  }
-
-  config = {
-    logging-config              = "<root>=INFO"
-    update-status-hook-interval = "5m"
-    # juju-http-proxy = var.http_proxy
-    # juju-https-proxy = var.https_proxy
-    # juju-no-proxy = var.no_proxy
-  }
-}
-
-module "kafka" {
-  depends_on = [module.cos, juju_model.kafka]
-
-  source = "./kafka"
-
-  model = juju_model.kafka.name
-  cos = {
-    deployed = "external"
-    offers={
-      dashboard=module.cos.offers.grafana_dashboards.url
-      metrics=module.cos.offers.prometheus_receive_remote_write.url,
-      logging=module.cos.offers.loki_logging.url
-    }
-  }
-}
-
-resource "juju_integration" "spark_streaming_hub" {
-
-  depends_on = [module.spark,module.kafka]
-
-  model      = "kafka"
-
-  application {
-    name = module.kafka.charms.spark_streaming
-    endpoint = "spark-service-account"
-  }
-
-  application {
-    offer_url = module.spark.offers.hub_service_account.url
-  }
-
-}
-
-resource "juju_integration" "spark_streaming_metastore" {
-
-  depends_on = [module.spark,module.kafka]
-
-  model      = "kafka"
-
-  application {
-    name = module.kafka.charms.spark_streaming
-    endpoint = "metastore"
-  }
-
-  application {
-    offer_url = module.spark.offers.metastore_database.url
-  }
-
-}
-
+# resource "juju_model" "kafka" {
+#   lifecycle {
+#     replace_triggered_by = []
+#   }
+# 
+#   depends_on=[juju_model.cos]
+# 
+#   name = "kafka"
+# 
+#   credential = var.K8S_CREDENTIAL
+# 
+#   cloud {
+#     name = var.K8S_CLOUD
+#   }
+# 
+#   config = {
+#     logging-config              = "<root>=INFO"
+#     update-status-hook-interval = "5m"
+#     # juju-http-proxy = var.http_proxy
+#     # juju-https-proxy = var.https_proxy
+#     # juju-no-proxy = var.no_proxy
+#   }
+# }
+# 
+# module "kafka" {
+#   depends_on = [module.cos, juju_model.kafka]
+# 
+#   source = "./kafka"
+# 
+#   model = juju_model.kafka.name
+#   cos = {
+#     deployed = "external"
+#     offers={
+#       dashboard=module.cos.offers.grafana_dashboards.url
+#       metrics=module.cos.offers.prometheus_receive_remote_write.url,
+#       logging=module.cos.offers.loki_logging.url
+#     }
+#   }
+# }
+# 
+# resource "juju_integration" "spark_streaming_hub" {
+# 
+#   depends_on = [module.spark,module.kafka]
+# 
+#   model      = "kafka"
+# 
+#   application {
+#     name = module.kafka.charms.spark_streaming
+#     endpoint = "spark-service-account"
+#   }
+# 
+#   application {
+#     offer_url = module.spark.offers.hub_service_account.url
+#   }
+# 
+# }
+# 
+# resource "juju_integration" "spark_streaming_metastore" {
+# 
+#   depends_on = [module.spark,module.kafka]
+# 
+#   model      = "kafka"
+# 
+#   application {
+#     name = module.kafka.charms.spark_streaming
+#     endpoint = "metastore"
+#   }
+# 
+#   application {
+#     offer_url = module.spark.offers.metastore_database.url
+#   }
+# 
+# }
+# 
 #############################
 # Kubeflow
 #############################
