@@ -83,7 +83,7 @@ resource "juju_model" "spark" {
 module "spark" {
   depends_on = [module.cos, juju_model.spark]
 
-  source                	  = "https://github.com/canonical/spark-k8s-bundle//terraform/products/charmed-spark?ref=336fad433d9bb2f1cae9c6cb0024c64ef19d911d"
+  source                	  = "git::https://github.com/canonical/spark-k8s-bundle//terraform/products/charmed-spark?ref=336fad433d9bb2f1cae9c6cb0024c64ef19d911d"
   model_uuid                = juju_model.spark.uuid
   create_model              = false
 
@@ -225,7 +225,7 @@ resource "juju_model" "kubeflow" {
 
 
 module "kubeflow" {
-  source                	  = "https://github.com/canonical/charmed-kubeflow-solutions//terraform/products/kubeflow?ref=1.11-ubuntu2"
+  source                	  = "git::https://github.com/canonical/charmed-kubeflow-solutions//terraform/products/kubeflow?ref=1.11-ubuntu2"
 
   release            = 1.11
   risk               = stable
