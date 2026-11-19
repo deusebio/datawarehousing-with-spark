@@ -60,7 +60,7 @@ resource "juju_model" "spark" {
     replace_triggered_by = []
   }
 
-  depends_on=[juju_model.kafka]
+  # depends_on=[juju_model.kafka]
 
   name = "spark"
 
