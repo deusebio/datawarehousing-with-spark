@@ -232,8 +232,7 @@ module "kubeflow" {
   create_model       = false
   model_uuid         = juju_model.kubeflow.uuid
   service_mesh_type  = ambient
-  auth_type          = dex"
-
+  
   enable_kfp         = true
   enable_katib       = false
   enable_notebooks   = true
