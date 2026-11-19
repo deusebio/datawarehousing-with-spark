@@ -198,7 +198,7 @@ resource "juju_integration" "spark_streaming_metastore" {
 #############################
 
 resource "juju_model" "kubeflow" {
-  count = var.enable_kubeflow ? 1 : 0
+  # count = var.enable_kubeflow ? 1 : 0
 
   lifecycle {
     replace_triggered_by = []
@@ -227,11 +227,11 @@ resource "juju_model" "kubeflow" {
 module "kubeflow" {
   source                	  = "git::https://github.com/canonical/charmed-kubeflow-solutions//terraform/products/kubeflow?ref=1.11-ubuntu2"
 
-  release            = 1.11
-  risk               = stable
+  release            = "1.11"
+  risk               = "stable"
   create_model       = false
   model_uuid         = juju_model.kubeflow.uuid
-  service_mesh_type  = ambient
+  service_mesh_type  = "ambient"
   
   enable_kfp         = true
   enable_katib       = false
