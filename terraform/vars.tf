@@ -49,6 +49,8 @@ variable "s3" {
     bucket               = optional(string, "spark-test")
     endpoint             = optional(string, "https://s3.amazonaws.com")
     region               = optional(string, "us-east-1")
+    access_key           = optional(string, "accesskey")
+    secret_key           = optional(string, "secretkey")
   })
   default = {}
 }
